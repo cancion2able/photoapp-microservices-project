@@ -1,10 +1,8 @@
 package net.its.photoappusersservice.ui.controllers;
 
+import net.its.photoappusersservice.ui.model.CreateUserRequestModel;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -22,7 +20,7 @@ public class UserController {
     }
 
     @PostMapping
-    public String createUser() {
+    public String createUser(@RequestBody CreateUserRequestModel userDetails) {
         return "CreateUser method is called";
     }
 }
