@@ -3,6 +3,7 @@ package net.its.photoappusersservice.ui.controllers;
 import net.its.photoappusersservice.service.UserService;
 import net.its.photoappusersservice.shared.UserDto;
 import net.its.photoappusersservice.ui.model.CreateUserRequestModel;
+import net.its.photoappusersservice.ui.model.CreateUserResponseModel;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.core.env.Environment;
@@ -30,11 +31,12 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@Valid @RequestBody CreateUserRequestModel userDetails) {
+    public ResponseEntity<CreateUserResponseModel> createUser(@Valid @RequestBody CreateUserRequestModel userDetails) {
         final ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         final UserDto userDto = modelMapper.map(userDetails, UserDto.class);
-        userService.createUser(userDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        final UserDto createdUser = userService.createUser(userDto);
+        final CreateUserResponseModel returnValue = modelMapper.map(createdUser, CreateUserResponseModel.class);
+        return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
     }
 }

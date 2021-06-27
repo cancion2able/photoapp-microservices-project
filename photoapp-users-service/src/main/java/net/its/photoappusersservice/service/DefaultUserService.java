@@ -26,6 +26,6 @@ public class DefaultUserService implements UserService {
         final UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
         userEntity.setEncryptedPassword("test");
         userRepository.save(userEntity);
-        return userDetails;
+        return modelMapper.map(userEntity, UserDto.class);
     }
 }
