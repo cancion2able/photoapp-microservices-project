@@ -6,7 +6,7 @@
  * shall use it only in accordance with the terms of the license agreement you entered into with
  * Arlo Technologies, Inc.
  */
-package net.its.photoappusersservice.config;
+package net.its.photoappusersservice.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +15,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import javax.servlet.Filter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,9 +32,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/**").hasIpAddress(env.getProperty("gateway.ip"));
+                .antMatchers("/**").hasIpAddress(env.getProperty("gateway.ip"))
+                .and().addFilter(getAuthenticationFilter());
         http.headers()
                 .frameOptions().disable();
+    }
+
+    private Filter getAuthenticationFilter() throws Exception {
+        final AuthenticationFilter authenticationFilter = new AuthenticationFilter();
+        authenticationFilter.setAuthenticationManager(authenticationManager());
+        return authenticationFilter;
     }
 
     @Bean
