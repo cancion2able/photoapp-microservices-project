@@ -8,9 +8,10 @@
  */
 package net.its.photoappusersservice.security;
 
-import org.springframework.context.annotation.Bean;
+import net.its.photoappusersservice.service.UserService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -23,9 +24,14 @@ import javax.servlet.Filter;
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     private final Environment env;
+    private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public WebSecurity(Environment env) {
+    public WebSecurity(Environment env, UserService userService,
+                       BCryptPasswordEncoder passwordEncoder) {
         this.env = env;
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -44,8 +50,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         return authenticationFilter;
     }
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
     }
 }
