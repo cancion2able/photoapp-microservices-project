@@ -17,7 +17,7 @@ public class DefaultPostFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         return chain.filter(exchange)
-                .then(Mono.fromRunnable(() -> logger.info("Global post-filter is executed.......")));
+                .then(Mono.fromRunnable(() -> logger.info("The last global post-filter is executed.......")));
     }
 
     @Override
